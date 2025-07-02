@@ -1,0 +1,197 @@
+---
+openapi: 3.0.1
+info:
+  title: QBusiness Operations Connector Helper
+  description: Plugin to help with QBusiness operations
+  version: 1.0.0
+servers:
+- url: https://sv4imuaip4.execute-api.us-east-1.amazonaws.com/dev # This should be the actual API Gateway
+paths:
+  "/qbusiness-list-applications":
+    get:
+      operationId: qbusiness-helper
+      description: >-
+        Use this operation get the configured QBusiness Applications within the account. Using this operation, 
+        you can find out all the QBusiness Application Id, Names and their corresponding Index Ids and data sources configured within them. 
+        You can use this information when user asks to Sync a data source.
+      x-amzn-operation-action-name: QBusiness List Applications
+      x-amzn-action-internal: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QBusinessResponseContent"
+  "/qbusiness-sync-data-source":
+    post:
+      operationId: syncDataSource
+      description: >-
+        Use this operation to create an Sync QBusiness data source that was created. 
+        Use the QBusiness Application Id, Data Source Id and Index Id from earlier operations.
+      x-amzn-operation-action-name: Sync Data Source
+      requestBody: 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                applicationId:
+                  description: QBusiness Application Id
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: QBusiness Application Id
+                indexId:
+                  description: QBusiness Index Id
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: QBusiness Index Id
+                datasourceId:
+                  description: QBusiness Data Source Id
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: QBusiness Data Source Id
+              required:
+                - applicationId
+                - indexId
+                - datasourceId
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncDataSourceResponse"
+  "/qbusiness-sync-summary":
+    post:
+      operationId: syncSummary
+      description: >-
+        Use this operation to get the sync history for a QBusiness data source.
+        Use the QBusiness Application Id, Data Source Id and Index Id from earlier operations.
+      x-amzn-operation-action-name: Get Sync Summary
+      requestBody: 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                applicationId:
+                  description: QBusiness Application Id
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: QBusiness Application Id
+                indexId:
+                  description: QBusiness Index Id
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: QBusiness Index Id
+                datasourceId:
+                  description: QBusiness Data Source Id
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: QBusiness Data Source Id
+                since:
+                  description: Hours to look back for sync history (default is 5)
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: Hours to look back
+              required:
+                - applicationId
+                - indexId
+                - datasourceId
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncSummaryResponse"
+  "/qbusiness-analyze-cloudwatch-logs":
+    post:
+      operationId: analyzeCloudwatchLogs
+      description: >-
+        Use this operation to analyze CloudWatch logs for a QBusiness data source.
+        This helps identify errors during data source synchronization.
+      x-amzn-operation-action-name: Analyze CloudWatch Logs
+      requestBody: 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                applicationId:
+                  description: QBusiness Application Id
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: QBusiness Application Id
+                datasourceId:
+                  description: QBusiness Data Source Id
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: QBusiness Data Source Id
+                since:
+                  description: Minutes to look back for logs (default is 4000)
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: Minutes to look back
+              required:
+                - applicationId
+                - datasourceId
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CloudWatchLogsResponse"
+components:
+  schemas:
+    ValidationExceptionResponseContent:
+      required:
+      - message
+      - path
+      type: object
+      properties:
+        path:
+          type: string
+          description: A JSONPointer expression to the structure member whose value
+            failed to satisfy the modeled constraints.
+        message:
+          type: string
+          description: A detailed description of the validation failure.
+      description: Describes one specific validation failure for an input member.
+
+    QBusinessResponseContent:
+      type: object
+      properties:
+        response:
+          type: string
+          description: QBusiness Response
+        validationResponse:
+          type: string
+          description: Response that informs the user whether the tenant is valid
+          example: The provided tenant is valid
+
+    SyncDataSourceResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          description: Information about Q Business data source sync job
+          example: Q Business data source sync job
+
+    SyncSummaryResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          description: Detailed metrics about the synchronization
+          example: Q Business data source sync summary
+
+    CloudWatchLogsResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          description: CloudWatch log report about the synchronization
+          example: CloudWatch logs analysis metrics about the synchronization

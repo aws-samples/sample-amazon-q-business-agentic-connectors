@@ -1,0 +1,4 @@
+requests==2.31.0
+msgraph-core==0.2.2
+azure-identity==1.21.0
+cryptography==45.0.4

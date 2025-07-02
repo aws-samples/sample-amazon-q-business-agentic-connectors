@@ -1,0 +1,9 @@
+{
+  "name": "update-lambda-env",
+  "version": "1.0.0",
+  "description": "Custom resource to update Lambda environment variables",
+  "main": "index.js",
+  "dependencies": {
+    "aws-sdk": "2.1048.0"
+  }
+}

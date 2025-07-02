@@ -1,0 +1,293 @@
+---
+openapi: 3.0.1
+info:
+  title: Amazon Q Business - Zendesk Connector Agent
+  description: |
+    A custom agent for Amazon Q Business that enables secure connections with Zendesk.
+    This agent handles OAuth 2.0 authentication, data source setup, and data synchronization.
+  version: 1.0.0
+servers:
+- url: https://abcdefghij.execute-api.us-east-1.amazonaws.com/prod
+  description: API Gateway endpoint
+paths:
+  /zendesk-oauth-app-helper:
+    get:
+      operationId: zendeskOAuthAppHelper
+      description: Entry point for the Zendesk connector agent that provides guidance and instructions for the OAuth app creation process.
+      parameters:
+        - name: question
+          in: query
+          description: Question about Zendesk Q Business Integration
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthAppHelperResponse"
+
+  /zendesk-create-oauth-app:
+    post:
+      operationId: zendeskCreateOAuthApp
+      description: Creates a Zendesk OAuth application or provides instructions for manual creation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                zendeskSubdomain:
+                  type: string
+                  description: Zendesk subdomain (e.g., 'mycompany' for mycompany.zendesk.com)
+                adminEmail:
+                  type: string
+                  description: Email address of a Zendesk admin user
+                apiToken:
+                  type: string
+                  description: API token for the Zendesk admin user
+                appName:
+                  type: string
+                  description: Name for the OAuth app (optional, defaults to 'Amazon Q Business Connector')
+              required:
+                - zendeskSubdomain
+                - adminEmail
+                - apiToken
+                - appName
+      responses:
+        "200":
+          description: Successfully created OAuth app or provided instructions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthAppInstructionsResponse"
+
+  /zendesk-initiate-oauth-flow:
+    post:
+      operationId: zendeskInitiateOAuthFlow
+      description: Generates an authorization URL for the Zendesk OAuth 2.0 flow and stores a state parameter in DynamoDB for CSRF protection.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                zendeskSubdomain:
+                  type: string
+                  description: Zendesk subdomain (e.g., 'mycompany' for mycompany.zendesk.com)
+                clientId:
+                  type: string
+                  description: Client ID from the Zendesk OAuth application
+                clientSecret:
+                  type: string
+                  description: Client Secret from the Zendesk OAuth application
+                redirectUri:
+                  type: string
+                  description: The redirect URI to use for the OAuth callback
+                scope:
+                  type: string
+                  description: Space-separated list of scopes (e.g., 'read write')
+                  default: "read write"
+              required:
+                - zendeskSubdomain
+                - clientId
+                - clientSecret
+                - redirectUri
+      responses:
+        "200":
+          description: Successfully initiated OAuth flow
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthFlowResponse"
+
+  /zendesk-oauth-callback:
+    get:
+      operationId: zendeskOauthCallback
+      description: |
+        Receives the authorization code from Zendesk, validates the state parameter, and stores the code temporarily for the token exchange.
+        Note: This endpoint returns HTML when accessed directly by a browser (based on Accept header or User-Agent) and JSON when accessed programmatically.
+      parameters:
+        - name: code
+          in: query
+          description: Authorization code from Zendesk
+          required: true
+          schema:
+            type: string
+        - name: state
+          in: query
+          description: State parameter for CSRF protection
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully received authorization code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+                  code:
+                    type: string
+                    description: The authorization code
+                  state:
+                    type: string
+                    description: The state parameter
+
+  /zendesk-exchange-auth-code-for-token:
+    post:
+      operationId: zendeskExchangeAuthCodeForToken
+      description: Exchanges the authorization code for an access token and stores it securely in AWS Secrets Manager.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                zendeskSubdomain:
+                  type: string
+                  description: Zendesk subdomain (e.g., 'mycompany' for mycompany.zendesk.com)
+                grantType:
+                  type: string
+                  description: OAuth grant type (must be 'authorization_code')
+                  default: "authorization_code"
+                code:
+                  type: string
+                  description: Authorization code received from Zendesk OAuth callback
+                clientId:
+                  type: string
+                  description: Client ID from the Zendesk OAuth application
+                clientSecret:
+                  type: string
+                  description: Client secret from the Zendesk OAuth application
+                redirectUri:
+                  type: string
+                  description: The redirect URI used in the initial authorization request
+                scope:
+                  type: string
+                  description: Space-separated list of scopes (e.g., 'read write')
+                  default: "read write"
+                state:
+                  type: string
+                  description: State parameter used in the initial authorization request
+              required:
+                - zendeskSubdomain
+                - grantType
+                - code
+                - clientId
+                - clientSecret
+                - redirectUri
+                - state
+      responses:
+        "200":
+          description: Successfully exchanged code for token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenExchangeResponse"
+
+  /zendesk-create-data-source:
+    post:
+      operationId: zendeskCreateDataSource
+      description: Creates a new data source in Amazon Q Business for Zendesk content, using the OAuth token stored in AWS Secrets Manager.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                qbusinessApplicationId:
+                  type: string
+                  description: Amazon Q Business application ID
+                qindexId:
+                  type: string
+                  description: Amazon Q Business index ID
+                zendeskSubdomain:
+                  type: string
+                  description: Zendesk subdomain (e.g., 'mycompany' for mycompany.zendesk.com)
+                dataSourceName:
+                  type: string
+                  description: Name for the data source
+                dataSourceType:
+                  type: string
+                  description: Type of Zendesk data to index
+                  enum: [GUIDE, SUPPORT, BOTH]
+                  default: BOTH
+                clientId:
+                  description: Zendesk OAuth App Client Id (client_id)
+                  x-amzn-form-display-name: Zendesk OAuth App Client Id
+                  type: string
+              required:
+                - qbusinessApplicationId
+                - qindexId
+                - zendeskSubdomain
+                - dataSourceName
+                - clientId
+      responses:
+        "200":
+          description: Successfully created data source
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateDataSourceResponse"
+
+
+
+components:
+  schemas:    
+    OAuthAppHelperResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          description: Help response
+          example: Zendesk OAuth App Helper
+    
+    OAuthAppInstructionsResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          description: Information about the app that was created
+          example: Zendesk OAuth App was created
+    
+    OAuthFlowResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message
+        authorizationUrl:
+          type: string
+          description: URL to redirect the user to for authorization
+        state:
+          type: string
+          description: State parameter for CSRF protection
+    
+    TokenExchangeResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          description: Information about the Zendesk API access token that was created
+          example: Zendesk API access token was created
+    
+    CreateDataSourceResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          description: Information about Q Business data source that was created
+          example: Q Business data source for Zendesk app was created
+    
+

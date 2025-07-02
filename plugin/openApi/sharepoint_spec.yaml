@@ -1,0 +1,273 @@
+---
+openapi: 3.0.1
+info:
+  title: Connector Helper
+  description: Plugin to help create SharePoint Connector and say hello
+  version: 1.0.0
+servers:
+- url: https://sv4imuaip4.execute-api.us-east-1.amazonaws.com/dev # This should be the actual API Gateway
+paths:
+  "/sharepoint-helper":
+    get:
+      operationId: help
+      description: Use this operation to help the user with Q Business - SharePoint Integration. You are a helpful bot who can automate the setup of SharePoint Data Source within QBusiness
+      x-amzn-operation-action-name: SharePoint Data Source Helper
+      parameters:
+        - name: question
+          in: query
+          description: Question about SharePoint Q Business Integration
+          required: true
+          x-amzn-form-display-name: Prompt
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HelpResponseContent"
+  "/sharepoint-create-azure-app":
+    post:
+      operationId: createAzureApp
+      description: Use this operation to create an azure app. Ensure that tenantId, adminAppId, adminAppSecret and azureAppName are provided before making this POST invocation
+      x-amzn-operation-action-name: Create Azure App
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tenantId:
+                  description: Tenant Id of the Azure application
+                  type: string
+                  format: uuid
+                  x-amzn-form-display-name: Tenant Id
+                adminAppId:
+                  description: Admin AppId that will be used to create Azure Application
+                  type: string
+                  x-amzn-form-display-name: Azure Admin App Id
+                adminAppSecret:
+                  description: Admin App Secret that will be used to create Azure Application
+                  type: string
+                  x-amzn-form-display-name: Azure Admin App secret
+                azureAppName:
+                  description: Name of the Azure App to be created
+                  type: string
+                  x-amzn-form-display-name: Azure Admin App Name
+              required:
+                - tenantId
+                - adminAppId
+                - adminAppSecret
+                - azureAppName
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateSharepointConnectionResponse"
+  "/sharepoint-create-certificate":
+    post:
+      operationId: certGenerator
+      x-amzn-operation-action-name: Generate Certificate
+      description: >-
+        Use this operation to create an certificate and upload it to S3. Ensure that you receive common name from the user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                appId:
+                  description: Azure application id
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: Azure Application Id
+                certCommonName:
+                  description: Common Name for the certificate
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: Cert Common Name
+                countryName:
+                  description: Country Name for the certificate
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: Country Name
+                stateName:
+                  description: State Name for the certificate
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: State Name
+                localityName:
+                  description: Locality Name for the certificate
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: Locality Name
+                organizationName:
+                  description: Organization Name for the certificate
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: Organization Name
+              required:
+                - appId
+                - certCommonName
+                - countryName
+                - stateName
+                - localityName
+                - organizationName
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateCertResponse"              
+  "/sharepoint-upload-certificate-to-azure":
+    post:
+      operationId: uploadCertificateToAzure
+      description: Use this operation to upload the generated certificate to Azure app. Ensure that you get the S3 bucket that was previously used to store the certificage. Use the previously generated tenant id, client id, client app id and client secret that was previously generated or ask the user to input those values
+      x-amzn-operation-action-name: Upload Cert to Azure App
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tenantId:
+                  description: tenant id of the Azure instance
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: Tenant Id
+                appId:
+                  description: Azure application id
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: Azure Application Id
+                objectId:
+                  description: Azure object id
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: Azure Object Id
+                appSecret:
+                  description: Azure app secret
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: Azure App Secret
+                s3Bucket:
+                  description: S3 bucket that has the .crt certificate
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: Cert S3 Bucket location
+              required:
+                - tenantId
+                - appId
+                - objectId
+                - appSecret
+                - s3Bucket
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateCertResponse"
+  "/sharepoint-create-data-source":
+    post:
+      operationId: createDataSource
+      description: >-
+        Use this operation to create new SharePoint Data Source for a provided QBusiness application. You can call qbusiness-list-applications endpoint from QBusiness Operations Connector Helper to obtain the list of QBusiness Application Id
+        and present it to the user to select from the list, you need to be able to infer QBusiness Application Id, Index Id and Data Source id. Re-use tenantId, azureAppClientId, privateKey, privateKeyLocation that was provided earlier
+      x-amzn-operation-action-name: Create SharePoint Data Source
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                applicationId:
+                  description: QBusiness application id
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: QBusiness Application Id
+                indexId:
+                  description: QBusiness Index id
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: QBusiness Index Id
+                sharePointUrl:
+                  description: SharePoint url that the customer wants to sync
+                  type: string
+                  x-amzn-form-display-name: SharePoint URL
+                tenantId:
+                  description: Tenant id from azure
+                  type: string
+                  x-amzn-form-display-name: Azure Tenant Id
+                clientId:
+                  description: Azure app client id
+                  type: string
+                  x-amzn-form-display-name: Azure App Client Id
+                s3Bucket:
+                  description: Bucket where the certificate and private key are stored
+                  type: string
+                  x-amzn-form-display-name: Certificate S3 Bucket Location
+                dataSourceName:
+                  description: Name for the SharePoint data source
+                  type: string
+                  x-amzn-form-display-name: Data Source Name
+              required:
+                - applicationId
+                - indexId
+                - sharePointUrl
+                - tenantId
+                - clientId
+                - s3Bucket
+                - dataSourceName
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateSharepointConnectionResponse"
+components:
+  schemas:
+    ValidationExceptionResponseContent:
+      required:
+      - message
+      - path
+      type: object
+      properties:
+        path:
+          type: string
+          description: A JSONPointer expression to the structure member whose value
+            failed to satisfy the modeled constraints.
+        message:
+          type: string
+          description: A detailed description of the validation failure.
+      description: Describes one specific validation failure for an input member.
+    HelpResponseContent:
+      type: object
+      properties:
+        response:
+          type: string
+          description: Help response
+        validationResponse:
+          type: string
+          description: Response that informs the user whether the tenant is valid
+          example: The provided tenant is valid
+    CreateSharepointConnectionResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          description: Information about the app that was created
+          example: Azure app was created
+    CreateCertResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          description: Information about the app that was created
+          example: Azure app was created
+

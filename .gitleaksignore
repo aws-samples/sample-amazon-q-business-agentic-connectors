@@ -1,0 +1,6 @@
+# GitLeaks ignore file for false positives
+# This file contains fingerprints of findings that have been determined to be safe
+
+# False positive: generic-api-key detection in README.md line 315
+# This appears to be triggered by documentation content, not an actual API key
+9b36c1519893ff1e2802c73f487bb318c1f939fd:README.md:generic-api-key:315

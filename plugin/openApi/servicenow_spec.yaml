@@ -1,0 +1,198 @@
+---
+openapi: 3.0.1
+info:
+  title: Connector Helper
+  description: Plugin to help create ServiceNow Connector
+  version: 1.0.0
+servers:
+- url: https://sv4imuaip4.execute-api.us-east-1.amazonaws.com/dev # This should be the actual API Gateway
+paths:
+  "/snow-helper":
+    get:
+      operationId: help
+      description: >-
+        Use this operation to help the user with Q Business - ServiceNow Integration. 
+        You are a helpful bot who can automate the setup of ServiceNow Data Source within QBusiness
+      x-amzn-operation-action-name: ServiceNow Connector Helper
+      parameters:
+        - name: question
+          in: query
+          description: Question about SharePoint Q Business Integration
+          x-amzn-form-display-name: Prompt
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HelpResponseContent"
+  "/snow-create-oauth-app":
+    post:
+      operationId: createOauthApp
+      description: >-
+        Use this operation to create an ServiceNow OAuth application that will be used by QBusiness to sync Service Now datasource
+      x-amzn-operation-action-name: ServiceNow Create OAuth app
+      requestBody: 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: ServiceNow OAuth application name
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: ServiceNow OAuth Application Name
+                instance:
+                  description: ServiceNow Instance that you want to connect to
+                  type: string
+                  x-amzn-form-display-name: ServiceNow Instance
+                username:
+                  description: ServiceNow user who has admin role assigned to them.
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: Username
+                password:
+                  description: ServiceNow password
+                  type: string
+                  format: password
+                  x-amzn-form-display-name: Password
+                redirectUrl:
+                  description: Redirect URL to be used when creating OAuth app in Service Now
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: Redirect URL
+              required:
+                - name
+                - instance
+                - username
+                - password
+                - redirectUrl
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceNowAppCreatedResponse"
+  "/snow-create-data-source":
+    post:
+      operationId: createServiceNowDataSource
+      description: >-
+        Use this operation to create new Servicenow Data Source for a provided QBusiness application. You can call qbusiness-list-applications endpoint from QBusiness Operations Connector Helper to obtain the list of QBusiness Application Ids
+        and present it to the user to select from the list, you need to be able to infer QBusiness Application Id, Index Id and Data Source id. Re-use username, password that was provided earlier by the user and client_id and client_secret
+        should be fetched from the /create-servicenow-oauth-app response.
+      x-amzn-operation-action-name: Create ServiceNow Data Source
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                applicationId:
+                  description: QBusiness application id
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: QBusiness Application Id
+                indexId:
+                  description: QBusiness Index id
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: QBusiness Index Id
+                datasourceName:
+                  description: DataSource name
+                  type: string
+                  format: string
+                  x-amzn-form-display-name: QBusiness Data Source Name
+                instance:
+                  description: Service now instance
+                  type: string
+                  x-amzn-form-display-name: ServiceNow Instance
+                clientId:
+                  description: ServiceNow OAuth App Client Id (client_id)
+                  x-amzn-form-display-name: ServiceNow OAuth App Client Id
+                  type: string
+                clientSecret:
+                  description: ServiceNow OAuth Client Secret (client_secret)
+                  type: string
+                  x-amzn-form-display-name: ServiceNow OAuth App Client Secret
+                username:
+                  description: ServiceNow username that was used to create OAuth app
+                  x-amzn-form-display-name: Username
+                  type: string
+                password:
+                  description: ServiceNow password that was used to create OAuth app
+                  x-amzn-form-display-name: Password
+                  type: string
+              required:
+                - applicationId
+                - indexId
+                - datasourceName
+                - instance
+                - clientId
+                - clientSecret
+                - username
+                - password
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateServiceNowDataSourceResponse"
+components:
+  schemas:
+    ValidationExceptionResponseContent:
+      required:
+      - message
+      - path
+      type: object
+      properties:
+        path:
+          type: string
+          description: A JSONPointer expression to the structure member whose value
+            failed to satisfy the modeled constraints.
+        message:
+          type: string
+          description: A detailed description of the validation failure.
+      description: Describes one specific validation failure for an input member.
+    QBusinessResponseContent:
+      type: object
+      properties:
+        response:
+          type: string
+          description: QBusiness Response
+          example: carthick
+        validationResponse:
+          type: string
+          description: Response that informs the user whether the tenant is valid
+          example: The provided tenant is valid
+    HelpResponseContent:
+      type: object
+      properties:
+        response:
+          type: string
+          description: Help response
+          example: carthick
+        validationResponse:
+          type: string
+          description: Response that informs the user whether the tenant is valid
+          example: The provided tenant is valid
+    CreateServiceNowDataSourceResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          description: Information about ServiceNow Datasource that was created
+          example: ServiceNow QBusiness Datasource
+    ServiceNowAppCreatedResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          description: Information about the ServiceNow App that was created
+          example: ServiceNow OAuth app was created
+
