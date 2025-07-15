@@ -15,6 +15,14 @@ from cryptography.x509.oid import NameOID
 
 
 def handler(event, context):
+
+
+
+    """Function handler."""
+
+
+
+
     """Function handler."""
 
     print(f"Received event: {event}")
@@ -104,6 +112,14 @@ def handler(event, context):
 
 
 def generate_self_signed_cert(common_name, country_name, state_name, locality_name, organization_name, validity_days):
+
+
+
+    """Function generate_self_signed_cert."""
+
+
+
+
     """Function generate_self_signed_cert."""
 
     """

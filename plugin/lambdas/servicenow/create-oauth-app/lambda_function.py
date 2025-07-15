@@ -9,6 +9,14 @@ from pysnc import ServiceNowClient
 
 
 def handler(event, context):
+
+
+
+    """Function handler."""
+
+
+
+
     """Function handler."""
 
     try:
@@ -23,6 +31,14 @@ def handler(event, context):
 
 
 def insert(event):
+
+
+
+    """Function insert."""
+
+
+
+
     """Function insert."""
 
     appname = event["body-json"]["name"]

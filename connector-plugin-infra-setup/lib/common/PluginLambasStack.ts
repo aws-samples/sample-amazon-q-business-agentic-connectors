@@ -31,7 +31,7 @@ export class PluginLambdasStack extends cdk.NestedStack {
     props: PluginLambdasStackProps,
   ): PluginAction {
     // Validate path to prevent path traversal
-    const validPathPrefixes = ['sharepoint/', 'zendesk/', 'servicenow/', 'operations/', 'common/'];
+    const validPathPrefixes = ['sharepoint/', 'zendesk/', 'servicenow/', 'salesforce/', 'operations/', 'common/'];
     const isValidPath = validPathPrefixes.some((prefix) =>
       pluginActionMedata.path.startsWith(prefix),
     );

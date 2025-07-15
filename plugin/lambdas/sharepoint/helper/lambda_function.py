@@ -6,6 +6,14 @@ import json
 
 
 def handler(event, context):
+
+
+
+    """Function handler."""
+
+
+
+
     """Function handler."""
 
     print(f"context: {context}")

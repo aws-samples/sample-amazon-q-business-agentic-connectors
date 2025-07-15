@@ -339,7 +339,7 @@ export class ApigwStack extends cdk.NestedStack {
 
   private createQBusinessPlugin(props: ApigwStackProps): qbusiness.CfnPlugin {
     // Validate plugin name to prevent path traversal
-    const validPluginNames = ['sharepoint', 'zendesk', 'servicenow', 'qbusiness'];
+    const validPluginNames = ['sharepoint', 'zendesk', 'servicenow', 'salesforce', 'qbusiness'];
     if (!validPluginNames.includes(props.pluginName)) {
       throw new Error(
         `Invalid plugin name: ${props.pluginName}. Must be one of: ${validPluginNames.join(', ')}`,

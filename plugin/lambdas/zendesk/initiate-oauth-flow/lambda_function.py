@@ -14,6 +14,14 @@ dynamodb = boto3.resource("dynamodb")
 
 
 def handler(event, context):
+
+
+
+    """Function handler."""
+
+
+
+
     """Function handler."""
 
     try:
@@ -71,6 +79,14 @@ def handler(event, context):
 
 
 def parse_body(event):
+
+
+
+    """Function parse_body."""
+
+
+
+
     """Function parse_body."""
 
     """Parse the API Gateway event body"""
@@ -86,6 +102,14 @@ def parse_body(event):
 
 
 def build_auth_url(zendesk_subdomain, client_id, redirect_uri, state):
+
+
+
+    """Function build_auth_url."""
+
+
+
+
     """Function build_auth_url."""
 
     """Build the Zendesk OAuth authorization URL"""
@@ -104,6 +128,14 @@ def build_auth_url(zendesk_subdomain, client_id, redirect_uri, state):
 
 
 def store_state(state, data, ttl_seconds=3600):
+
+
+
+    """Function store_state."""
+
+
+
+
     """Function store_state."""
 
     """Store state in DynamoDB with TTL"""

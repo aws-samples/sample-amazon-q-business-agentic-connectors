@@ -9,6 +9,14 @@ import requests
 
 
 def handler(event, context):
+
+
+
+    """Function handler."""
+
+
+
+
     """Function handler."""
 
     try:
@@ -29,6 +37,14 @@ def handler(event, context):
 
 
 def create_oauth_app(event, redirect_uri):
+
+
+
+    """Function create_oauth_app."""
+
+
+
+
     """Function create_oauth_app."""
 
     """Create OAuth app automatically using Zendesk API"""

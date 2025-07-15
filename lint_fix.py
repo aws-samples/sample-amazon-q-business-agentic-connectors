@@ -312,6 +312,10 @@ def fix_common_issues(file_path: str) -> None:
 
         # Fix missing docstrings for functions
         def add_docstring(match):
+
+            """Function add_docstring."""
+
+        
             """Add docstring to a function.
 
             Args:

@@ -9,6 +9,10 @@ import boto3
 
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):
+
+        """Function default."""
+
+    
         """Function default."""
 
         if isinstance(obj, datetime):
@@ -17,6 +21,14 @@ class DateTimeEncoder(json.JSONEncoder):
 
 
 def handler(event, context):
+
+
+
+    """Function handler."""
+
+
+
+
     """Function handler."""
 
     print(f"Received event: {json.dumps(event)}")

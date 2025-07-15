@@ -8,6 +8,14 @@ import boto3
 
 
 def get_field_value(json_structure, field_name):
+
+
+
+    """Function get_field_value."""
+
+
+
+
     """Function get_field_value."""
 
     """
@@ -28,6 +36,14 @@ def get_field_value(json_structure, field_name):
 
 
 def handler(event, context):
+
+
+
+    """Function handler."""
+
+
+
+
     """Function handler."""
 
     """
