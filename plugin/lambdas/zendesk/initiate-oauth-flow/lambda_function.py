@@ -71,8 +71,6 @@ def handler(event, context):
 
 
 def parse_body(event):
-    """Function parse_body."""
-
     """Parse the API Gateway event body"""
     if "body-json" in event:
         return event["body-json"]
@@ -86,8 +84,6 @@ def parse_body(event):
 
 
 def build_auth_url(zendesk_subdomain, client_id, redirect_uri, state):
-    """Function build_auth_url."""
-
     """Build the Zendesk OAuth authorization URL"""
     base_url = f"https://{zendesk_subdomain}.zendesk.com/oauth/authorizations/new"
 
@@ -104,8 +100,6 @@ def build_auth_url(zendesk_subdomain, client_id, redirect_uri, state):
 
 
 def store_state(state, data, ttl_seconds=3600):
-    """Function store_state."""
-
     """Store state in DynamoDB with TTL"""
     table_name = os.environ.get("STATE_TABLE_NAME")
     if not table_name:

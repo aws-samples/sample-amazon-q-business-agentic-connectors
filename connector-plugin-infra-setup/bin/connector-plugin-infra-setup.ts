@@ -6,6 +6,7 @@ import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 
 import { QBusinessOperationsParentStack } from '../lib/qbusinessOps/qbusiness-operations-parent-stack';
+import { SalesforceParentStack } from '../lib/salesforce/salesforce-parent-stack';
 import { ServicenowParentStack } from '../lib/servicenow/servicenow-parent-stack';
 import { SharepointParentStack } from '../lib/sharepoint/sharepoint-parent-stack';
 import { ZendeskParentStack } from '../lib/zendesk/zendesk-parent-stack';
@@ -37,6 +38,14 @@ new QBusinessOperationsParentStack(app, 'QBusinessOperationsStack', {
 
 // Add Zendesk connector stack
 new ZendeskParentStack(app, 'ZendeskStack', {
+  env: {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEFAULT_REGION,
+  },
+});
+
+// Add Salesforce connector stack
+new SalesforceParentStack(app, 'SalesforceStack', {
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,
     region: process.env.CDK_DEFAULT_REGION,

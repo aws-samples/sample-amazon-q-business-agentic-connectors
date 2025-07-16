@@ -8,8 +8,6 @@ import boto3
 
 
 def get_field_value(json_structure, field_name):
-    """Function get_field_value."""
-
     """
     Extract a field value from a JSON structure.
     
@@ -28,8 +26,6 @@ def get_field_value(json_structure, field_name):
 
 
 def handler(event, context):
-    """Function handler."""
-
     """
     Lambda handler function to analyze CloudWatch logs.
     

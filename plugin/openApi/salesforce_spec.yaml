@@ -1,0 +1,701 @@
+---
+openapi: 3.0.1
+info:
+  title: Amazon Q Business - Salesforce Connector Agent
+  description: |
+    A custom agent for Amazon Q Business that enables secure connections with Salesforce.
+    This agent handles Connected App creation, authentication setup, and data source configuration.
+  version: 1.0.0
+servers:
+- url: https://abcdefghij.execute-api.us-east-1.amazonaws.com/prod
+  description: API Gateway endpoint
+paths:
+  /salesforce-helper:
+    get:
+      operationId: salesforceHelper
+      description: Entry point for the Salesforce connector agent that provides guidance and instructions for the Salesforce integration process.
+      x-amzn-operation-action-name: Salesforce Data Source Helper
+      parameters:
+        - name: question
+          in: query
+          description: Question about Salesforce Q Business Integration
+          required: true
+          x-amzn-form-display-name: Question
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HelperResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /salesforce-create-connected-app:
+    post:
+      operationId: salesforceCreateConnectedApp
+      description: Creates a Salesforce Connected App using the Salesforce APIs with the provided credentials.
+      x-amzn-operation-action-name: Create Salesforce Connected App
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - hostUrl
+                - username
+                - password
+                - securityToken
+                - connectedAppName
+                - contactEmail
+              properties:
+                hostUrl:
+                  type: string
+                  description: Salesforce instance URL (e.g., https://mycompany.salesforce.com)
+                  x-amzn-form-display-name: Salesforce Host URL
+                  example: "https://mycompany.salesforce.com"
+                username:
+                  type: string
+                  description: Salesforce username
+                  x-amzn-form-display-name: Username
+                  example: "admin@company.com"
+                password:
+                  type: string
+                  description: Salesforce password
+                  x-amzn-form-display-name: Password
+                  format: password
+                securityToken:
+                  type: string
+                  description: Salesforce security token
+                  x-amzn-form-display-name: Security Token
+                  format: password
+                connectedAppName:
+                  type: string
+                  description: Name for the Connected App
+                  x-amzn-form-display-name: Connected App Name
+                  example: "Q Business Connector"
+                contactEmail:
+                  type: string
+                  format: email
+                  description: Contact email for the Connected App (required for verification)
+                  x-amzn-form-display-name: Contact Email
+                  example: "admin@company.com"
+                description:
+                  type: string
+                  description: Description for the Connected App
+                  x-amzn-form-display-name: Description
+                  example: "Connected App for Amazon Q Business integration"
+                  default: "Amazon Q Business Salesforce Connector"
+      responses:
+        "200":
+          description: Connected App created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConnectedAppResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /salesforce-update-credentials:
+    post:
+      operationId: salesforceUpdateCredentials
+      description: Updates the Salesforce credentials with Consumer Key and Consumer Secret after manual verification.
+      x-amzn-operation-action-name: Update Salesforce Credentials
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - secretName
+                - consumerKey
+                - consumerSecret
+              properties:
+                secretName:
+                  type: string
+                  description: AWS Secrets Manager secret name from the Connected App creation step
+                  x-amzn-form-display-name: Secret Name
+                  example: "salesforce-credentials-abc12345"
+                consumerKey:
+                  type: string
+                  description: Consumer Key from Salesforce Connected App (after verification)
+                  x-amzn-form-display-name: Consumer Key
+                  example: "3MVG9..."
+                consumerSecret:
+                  type: string
+                  description: Consumer Secret from Salesforce Connected App (after verification)
+                  x-amzn-form-display-name: Consumer Secret
+                  format: password
+                  example: "1234567890..."
+      responses:
+        "200":
+          description: Credentials updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateCredentialsResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Secret not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /salesforce-test-authentication:
+    post:
+      operationId: salesforceTestAuthentication
+      description: Tests the Salesforce authentication using credentials stored in AWS Secrets Manager.
+      x-amzn-operation-action-name: Test Salesforce Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - secretName
+              properties:
+                secretName:
+                  type: string
+                  description: AWS Secrets Manager secret name containing Salesforce credentials
+                  x-amzn-form-display-name: Secret Name
+                  example: "salesforce-credentials-abc12345"
+      responses:
+        "200":
+          description: Authentication test successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTestResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /salesforce-create-salesforce-actions-connected-app:
+    post:
+      operationId: salesforceCreateActionsConnectedApp
+      description: Creates a Salesforce Connected App specifically configured for Salesforce Actions integration.
+      x-amzn-operation-action-name: Create Salesforce Actions Connected App
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - hostUrl
+                - username
+                - password
+                - securityToken
+                - qBusinessEndpoint
+                - contactEmail
+                - connectedAppName
+              properties:
+                hostUrl:
+                  type: string
+                  description: Salesforce instance URL (e.g., https://mycompany.salesforce.com)
+                  x-amzn-form-display-name: Salesforce Host URL
+                  example: "https://mycompany.salesforce.com"
+                username:
+                  type: string
+                  description: Salesforce username
+                  x-amzn-form-display-name: Username
+                  example: "admin@company.com"
+                password:
+                  type: string
+                  description: Salesforce password
+                  x-amzn-form-display-name: Password
+                  format: password
+                securityToken:
+                  type: string
+                  description: Salesforce security token
+                  x-amzn-form-display-name: Security Token
+                  format: password
+                qBusinessEndpoint:
+                  type: string
+                  description: Amazon Q Business endpoint URL for OAuth callback
+                  x-amzn-form-display-name: Q Business Endpoint URL
+                  example: "https://your-q-endpoint.amazonaws.com"
+                connectedAppName:
+                  type: string
+                  description: Name for the Connected App
+                  x-amzn-form-display-name: Connected App Name
+                  example: "Q Business Actions Connector"
+                  default: "Q Business Actions Connector"
+                contactEmail:
+                  type: string
+                  format: email
+                  description: Contact email for the Connected App (required for verification)
+                  x-amzn-form-display-name: Contact Email
+                  example: "admin@company.com"
+                description:
+                  type: string
+                  description: Description for the Connected App
+                  x-amzn-form-display-name: Description
+                  example: "Connected App for Amazon Q Business Salesforce Actions"
+                  default: "Amazon Q Business Salesforce Actions Connector"
+      responses:
+        "200":
+          description: Connected App created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActionsConnectedAppResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /salesforce-setup-salesforce-actions-plugin:
+    post:
+      operationId: salesforceSetupActionsPlugin
+      description: Sets up the Salesforce Actions Plugin in Amazon Q Business with the provided credentials.
+      x-amzn-operation-action-name: Setup Salesforce Actions Plugin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - clientId
+                - clientSecret
+                - redirectUrl
+                - salesforceDomainUrl
+                - qBusinessApplicationId
+              properties:
+                clientId:
+                  type: string
+                  description: Client ID (Consumer Key) from Salesforce Connected App
+                  x-amzn-form-display-name: Client ID
+                  example: "3MVG9..."
+                clientSecret:
+                  type: string
+                  description: Client Secret (Consumer Secret) from Salesforce Connected App
+                  x-amzn-form-display-name: Client Secret
+                  format: password
+                redirectUrl:
+                  type: string
+                  description: Redirect URL for OAuth callback (Q Business endpoint + /oauth/callback)
+                  x-amzn-form-display-name: Redirect URL
+                  example: "https://your-q-endpoint.amazonaws.com/oauth/callback"
+                salesforceDomainUrl:
+                  type: string
+                  description: Salesforce domain URL for API access
+                  x-amzn-form-display-name: Salesforce Domain URL
+                  example: "https://yourInstance.my.salesforce.com/services/data/v60.0"
+                qBusinessApplicationId:
+                  type: string
+                  description: Amazon Q Business Application ID
+                  x-amzn-form-display-name: Q Business Application ID
+                  example: "12345678-1234-1234-1234-123456789012"
+                pluginName:
+                  type: string
+                  description: Name for the Salesforce Actions Plugin
+                  x-amzn-form-display-name: Plugin Name
+                  example: "Salesforce Actions Plugin"
+                  default: "Salesforce-Actions-Plugin"
+      responses:
+        "200":
+          description: Salesforce Actions Plugin setup completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActionsPluginResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /salesforce-create-data-source:
+    post:
+      operationId: salesforceCreateDataSource
+      description: Creates a new Salesforce data source in Amazon Q Business using credentials stored in AWS Secrets Manager.
+      x-amzn-operation-action-name: Create Salesforce Data Source
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - qBusinessApplicationId
+                - qBusinessIndexId
+                - dataSourceName
+                - secretName
+              properties:
+                qBusinessApplicationId:
+                  type: string
+                  description: Amazon Q Business Application ID
+                  x-amzn-form-display-name: Q Business Application ID
+                  example: "12345678-1234-1234-1234-123456789012"
+                qBusinessIndexId:
+                  type: string
+                  description: Amazon Q Business Index ID
+                  x-amzn-form-display-name: Q Business Index ID
+                  example: "87654321-4321-4321-4321-210987654321"
+                dataSourceName:
+                  type: string
+                  description: Name for the data source
+                  x-amzn-form-display-name: Data Source Name
+                  example: "Salesforce Knowledge Base"
+                secretName:
+                  type: string
+                  description: AWS Secrets Manager secret name containing Salesforce credentials
+                  x-amzn-form-display-name: Secret Name
+                  example: "salesforce-credentials-abc12345"
+                syncMode:
+                  type: string
+                  enum: ["FULL_CRAWL", "CHANGE_LOG"]
+                  description: Synchronization mode
+                  x-amzn-form-display-name: Sync Mode
+                  default: "FULL_CRAWL"
+                includeKnowledgeArticles:
+                  type: boolean
+                  description: Include Salesforce Knowledge articles
+                  x-amzn-form-display-name: Include Knowledge Articles
+                  default: true
+                includeChatterFeeds:
+                  type: boolean
+                  description: Include Chatter feeds and posts
+                  x-amzn-form-display-name: Include Chatter Feeds
+                  default: false
+                includeCases:
+                  type: boolean
+                  description: Include Salesforce Cases
+                  x-amzn-form-display-name: Include Cases
+                  default: false
+                includeOpportunities:
+                  type: boolean
+                  description: Include Salesforce Opportunities
+                  x-amzn-form-display-name: Include Opportunities
+                  default: false
+                includeAccounts:
+                  type: boolean
+                  description: Include Salesforce Accounts
+                  x-amzn-form-display-name: Include Accounts
+                  default: false
+                includeContacts:
+                  type: boolean
+                  description: Include Salesforce Contacts
+                  x-amzn-form-display-name: Include Contacts
+                  default: false
+                crawlAttachments:
+                  type: boolean
+                  description: Include file attachments
+                  x-amzn-form-display-name: Crawl Attachments
+                  default: true
+      responses:
+        "200":
+          description: Data source created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataSourceResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    HelperResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Guidance message for Salesforce setup
+        instructions:
+          type: array
+          items:
+            type: string
+          description: Step-by-step instructions
+        nextSteps:
+          type: array
+          items:
+            type: string
+          description: Recommended next steps
+        requirements:
+          type: array
+          items:
+            type: string
+          description: Prerequisites and requirements
+
+    ConnectedAppResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message
+        connectedAppId:
+          type: string
+          description: Created Connected App ID
+        consumerKey:
+          type: string
+          description: Consumer Key (Client ID)
+        consumerSecret:
+          type: string
+          description: Consumer Secret (Client Secret)
+        secretName:
+          type: string
+          description: AWS Secrets Manager secret name containing all credentials
+        authenticationUrl:
+          type: string
+          description: Salesforce authentication URL
+        instructions:
+          type: array
+          items:
+            type: string
+          description: Next steps and instructions
+
+    UpdateCredentialsResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message
+        secretName:
+          type: string
+          description: AWS Secrets Manager secret name
+        consumerKey:
+          type: string
+          description: Consumer Key (Client ID)
+        consumerSecret:
+          type: string
+          description: Consumer Secret (masked for security)
+        instructions:
+          type: array
+          items:
+            type: string
+          description: Next steps and instructions
+
+    AuthTestResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Authentication test result
+        success:
+          type: boolean
+          description: Whether authentication was successful
+        accessToken:
+          type: string
+          description: Access token (masked for security)
+        instanceUrl:
+          type: string
+          description: Salesforce instance URL from response
+        userInfo:
+          type: object
+          description: Basic user information
+          properties:
+            userId:
+              type: string
+            organizationId:
+              type: string
+            username:
+              type: string
+
+    DataSourceResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message
+        dataSourceId:
+          type: string
+          description: Created data source ID
+        dataSourceArn:
+          type: string
+          description: Created data source ARN
+        secretName:
+          type: string
+          description: AWS Secrets Manager secret name
+        syncJobId:
+          type: string
+          description: Initial sync job ID (if started)
+        configuration:
+          type: object
+          description: Data source configuration summary
+          properties:
+            hostUrl:
+              type: string
+            syncMode:
+              type: string
+            includedObjects:
+              type: array
+              items:
+                type: string
+
+    ActionsConnectedAppResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message
+        connectedAppId:
+          type: string
+          description: Salesforce Connected App ID
+        connectedAppName:
+          type: string
+          description: Name of the Connected App
+        redirectUrl:
+          type: string
+          description: OAuth redirect URL for Q Business
+        qBusinessEndpoint:
+          type: string
+          description: Q Business endpoint URL
+        contactEmail:
+          type: string
+          description: Contact email for verification
+        purpose:
+          type: string
+          description: Purpose of the Connected App
+        instructions:
+          type: array
+          items:
+            type: string
+          description: Step-by-step instructions for next steps
+
+    ActionsPluginResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message
+        pluginId:
+          type: string
+          description: Q Business Plugin ID
+        pluginArn:
+          type: string
+          description: Q Business Plugin ARN
+        secretName:
+          type: string
+          description: AWS Secrets Manager secret name
+        qBusinessApplicationId:
+          type: string
+          description: Q Business Application ID
+        configuration:
+          type: object
+          description: Plugin configuration details
+          properties:
+            pluginName:
+              type: string
+            salesforceDomainUrl:
+              type: string
+            clientId:
+              type: string
+            redirectUrl:
+              type: string
+            accessTokenUrl:
+              type: string
+            authorizationUrl:
+              type: string
+        instructions:
+          type: array
+          items:
+            type: string
+          description: Information about the created plugin
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error type
+        message:
+          type: string
+          description: Error message
+        details:
+          type: string
+          description: Additional error details
+        salesforceError:
+          type: object
+          description: Salesforce-specific error details
+          properties:
+            errorCode:
+              type: string
+            fields:
+              type: array
+              items:
+                type: string

@@ -29,8 +29,6 @@ def handler(event, context):
 
 
 def create_oauth_app(event, redirect_uri):
-    """Function create_oauth_app."""
-
     """Create OAuth app automatically using Zendesk API"""
     body = event["body-json"]
     zendesk_subdomain = body.get("zendeskSubdomain")

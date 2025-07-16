@@ -15,8 +15,6 @@ dynamodb = boto3.resource("dynamodb")
 
 
 def handler(event, context):
-    """Function handler."""
-
     try:
         # Create a sanitized copy of the event for logging only
         import copy
@@ -110,8 +108,6 @@ def handler(event, context):
 
 
 def parse_body(event):
-    """Function parse_body."""
-
     """Parse the API Gateway event body"""
     if "body-json" in event:
         return event["body-json"]
@@ -125,8 +121,6 @@ def parse_body(event):
 
 
 def get_state(state):
-    """Function get_state."""
-
     """Retrieve state from DynamoDB"""
     table_name = os.environ.get("STATE_TABLE_NAME")
     if not table_name:
@@ -155,8 +149,6 @@ def get_state(state):
 
 
 def delete_state(state):
-    """Function delete_state."""
-
     """Delete state from DynamoDB"""
     table_name = os.environ.get("STATE_TABLE_NAME")
     if not table_name:
@@ -168,8 +160,6 @@ def delete_state(state):
 
 
 def exchange_code_for_token(zendesk_subdomain, client_id, client_secret, code, redirect_uri):
-    """Function exchange_code_for_token."""
-
     """Exchange authorization code for access token"""
     token_url = f"https://{zendesk_subdomain}.zendesk.com/oauth/tokens"
 
@@ -198,8 +188,6 @@ def exchange_code_for_token(zendesk_subdomain, client_id, client_secret, code, r
 
 
 def store_token(secret_name, token_data, zendesk_subdomain):
-    """Function store_token."""
-
     """Store token in AWS Secrets Manager"""
     try:
         # Create a simplified secret value with only the required fields
@@ -236,6 +224,10 @@ if __name__ == "__main__":
 
     # Mock functions for local testing
     def mock_get_state(state):
+
+        """Function mock_get_state."""
+
+    
         """Function mock_get_state."""
 
         return {"clientId": "test-client-id", "clientSecret": "test-client-secret", "zendeskSubdomain": "example"}

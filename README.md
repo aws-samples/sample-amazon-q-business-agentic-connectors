@@ -69,7 +69,29 @@ Key features:
 - OAuth application setup and configuration
 - ServiceNow data source configuration
 
-### 4. Q Business Operations
+### 4. Salesforce Connector
+
+Enables secure connections with Salesforce through Connected App and username/password authentication.
+
+Key features:
+- Automated Connected App creation via Salesforce APIs
+- Session-based authentication using SOAP/REST APIs
+- Comprehensive Salesforce object support (Knowledge Articles, Cases, Opportunities, Accounts, Contacts, Chatter)
+- Secure credential storage in AWS Secrets Manager
+- Configurable sync options and attachment crawling
+
+### 5. Salesforce Actions Plugin
+
+Enables interactive actions with Salesforce directly from Amazon Q Business.
+
+Key features:
+- Automated Connected App creation for Actions integration
+- OAuth 2.0 authentication with comprehensive scopes
+- Pre-configured plugin service role with proper trust policy
+- Enables creating, updating, and viewing Salesforce records from Q Business
+- Supports executing Salesforce workflows and searching Salesforce data
+
+### 6. Q Business Operations
 
 Provides common operations for managing Amazon Q Business resources across all connectors.
 
@@ -99,6 +121,14 @@ q-business-agentic-connectors/
 │   │   │   ├── create-oauth-app/    # OAuth app creation
 │   │   │   ├── create-data-source/  # ServiceNow data source creation
 │   │   │   └── helper/              # ServiceNow helper functions
+│   │   ├── salesforce/              # Salesforce connector functions
+│   │   │   ├── create-connected-app/     # Connected App creation
+│   │   │   ├── test-authentication/      # Authentication testing
+│   │   │   ├── create-data-source/       # Salesforce data source creation
+│   │   │   ├── update-credentials/       # Update stored credentials
+│   │   │   ├── create-salesforce-actions-connected-app/  # Actions Connected App creation
+│   │   │   ├── setup-salesforce-actions-plugin/          # Actions Plugin setup
+│   │   │   └── helper/                   # Salesforce helper functions
 │   │   ├── operations/              # Common operations across all connectors
 │   │   │   ├── qbusiness-list-applications/  # List Q Business applications
 │   │   │   ├── qbusiness-sync-data-source/   # Sync data sources
@@ -109,12 +139,14 @@ q-business-agentic-connectors/
 │       ├── sharepoint_spec.yaml     # SharePoint connector API definition
 │       ├── zendesk_spec.yaml        # Zendesk connector API definition
 │       ├── servicenow_spec.yaml     # ServiceNow connector API definition
+│       ├── salesforce_spec.yaml     # Salesforce connector API definition
 │       └── qbusiness_spec.yaml      # Q Business operations API definition
 └── connector-plugin-infra-setup/    # Infrastructure as Code (CDK)
     ├── lib/                         # CDK stack definitions
     │   ├── sharepoint/              # SharePoint connector infrastructure
     │   ├── zendesk/                 # Zendesk connector infrastructure
     │   ├── servicenow/              # ServiceNow connector infrastructure
+    │   ├── salesforce/              # Salesforce connector infrastructure
     │   ├── qbusinessOps/            # Q Business operations infrastructure
     │   ├── authorizer/              # API authorization components
     │   ├── common/                  # Shared infrastructure components
@@ -189,6 +221,9 @@ cdk deploy ZendeskStack --parameters QBusinessPluginApplicationId=<your-applicat
 # Or deploy the ServiceNow connector
 cdk deploy ServiceNowStack --parameters QBusinessPluginApplicationId=<your-application-id>
 
+# Or deploy the Salesforce connector
+cdk deploy SalesforceStack --parameters QBusinessPluginApplicationId=<your-application-id>
+
 # Or deploy the Q Business Operations stack
 cdk deploy QBusinessOperationsStack --parameters QBusinessPluginApplicationId=<your-application-id>
 ```
@@ -244,6 +279,44 @@ After deployment, you'll need to:
 2. **Data Source Creation**
    - Create a new ServiceNow data source in Amazon Q Business
    - Configure the data source with OAuth credentials
+
+### Salesforce Integration Flow
+
+1. **Connected App Creation**
+   - Provide Salesforce credentials (username, password, security token, instance URL)
+   - Automatically create a Connected App via Salesforce APIs
+   - Store all credentials securely in AWS Secrets Manager
+   
+2. **Authentication Testing**
+   - Test the complete authentication chain using stored credentials
+   - Validate OAuth 2.0 Username-Password flow
+   - Confirm API access and user permissions
+   
+3. **Data Source Creation**
+   - Create a new Salesforce data source in Amazon Q Business
+   - Configure included objects (Knowledge Articles, Cases, Opportunities, etc.)
+   - Set up synchronization schedule and options
+
+### Salesforce Actions Plugin Flow
+
+1. **Actions Connected App Creation**
+   - Provide Salesforce credentials (username, password, security token, instance URL)
+   - Automatically create a Connected App specifically for Actions with comprehensive OAuth scopes
+   - Configure proper redirect URLs for OAuth authentication
+   
+2. **Plugin Setup**
+   - Store OAuth credentials securely in AWS Secrets Manager
+   - Create the Salesforce Actions Plugin in Amazon Q Business
+   - Configure the plugin with the pre-created service role
+   
+3. **User Authentication**
+   - End users authenticate with Salesforce via OAuth
+   - Q Business securely manages tokens for ongoing interactions
+   
+4. **Performing Actions**
+   - Users can create, update, and view Salesforce records
+   - Execute Salesforce workflows and search Salesforce data
+   - All actions respect user permissions in Salesforce
 
 ### Common Operations (Q Business Operations)
 
