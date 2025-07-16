@@ -80,7 +80,18 @@ Key features:
 - Secure credential storage in AWS Secrets Manager
 - Configurable sync options and attachment crawling
 
-### 5. Q Business Operations
+### 5. Salesforce Actions Plugin
+
+Enables interactive actions with Salesforce directly from Amazon Q Business.
+
+Key features:
+- Automated Connected App creation for Actions integration
+- OAuth 2.0 authentication with comprehensive scopes
+- Pre-configured plugin service role with proper trust policy
+- Enables creating, updating, and viewing Salesforce records from Q Business
+- Supports executing Salesforce workflows and searching Salesforce data
+
+### 6. Q Business Operations
 
 Provides common operations for managing Amazon Q Business resources across all connectors.
 
@@ -114,6 +125,9 @@ q-business-agentic-connectors/
 │   │   │   ├── create-connected-app/     # Connected App creation
 │   │   │   ├── test-authentication/      # Authentication testing
 │   │   │   ├── create-data-source/       # Salesforce data source creation
+│   │   │   ├── update-credentials/       # Update stored credentials
+│   │   │   ├── create-salesforce-actions-connected-app/  # Actions Connected App creation
+│   │   │   ├── setup-salesforce-actions-plugin/          # Actions Plugin setup
 │   │   │   └── helper/                   # Salesforce helper functions
 │   │   ├── operations/              # Common operations across all connectors
 │   │   │   ├── qbusiness-list-applications/  # List Q Business applications
@@ -282,6 +296,27 @@ After deployment, you'll need to:
    - Create a new Salesforce data source in Amazon Q Business
    - Configure included objects (Knowledge Articles, Cases, Opportunities, etc.)
    - Set up synchronization schedule and options
+
+### Salesforce Actions Plugin Flow
+
+1. **Actions Connected App Creation**
+   - Provide Salesforce credentials (username, password, security token, instance URL)
+   - Automatically create a Connected App specifically for Actions with comprehensive OAuth scopes
+   - Configure proper redirect URLs for OAuth authentication
+   
+2. **Plugin Setup**
+   - Store OAuth credentials securely in AWS Secrets Manager
+   - Create the Salesforce Actions Plugin in Amazon Q Business
+   - Configure the plugin with the pre-created service role
+   
+3. **User Authentication**
+   - End users authenticate with Salesforce via OAuth
+   - Q Business securely manages tokens for ongoing interactions
+   
+4. **Performing Actions**
+   - Users can create, update, and view Salesforce records
+   - Execute Salesforce workflows and search Salesforce data
+   - All actions respect user permissions in Salesforce
 
 ### Common Operations (Q Business Operations)
 
