@@ -5,14 +5,6 @@ import json
 
 
 def handler(event, context):
-
-
-
-    """Function handler."""
-
-
-
-
     """Function handler for Salesforce helper."""
 
     try:

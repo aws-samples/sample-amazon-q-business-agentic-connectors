@@ -10,14 +10,6 @@ from msgraph.core import GraphClient
 def create_azure_app_with_sites_permission(
     admin_client_id, admin_client_secret, tenant_id, new_app_name, redirect_uris=None
 ):
-
-
-
-    """Function create_azure_app_with_sites_permission."""
-
-
-
-
     """Function create_azure_app_with_sites_permission."""
 
     """
@@ -152,14 +144,6 @@ def create_azure_app_with_sites_permission(
 
 
 def createApp(tenantId: str, adminAppId: str, adminSecret: str, clientAppName: str):
-
-
-
-    """Function createApp."""
-
-
-
-
     """Function createApp."""
 
     print("Creating Azure application...")
@@ -174,14 +158,6 @@ def construct_url_for_azure_app(appId: str) -> str:
 
 
 def handler(event, context):
-
-
-
-    """Function handler."""
-
-
-
-
     """Function handler."""
 
     print(f"Received event: {event}")

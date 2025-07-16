@@ -235,6 +235,7 @@ def create_actions_connected_app_via_metadata_api(session_id, instance_url, app_
                         <met:scopes>Full</met:scopes>
                         <met:isIntrospectAllTokens>false</met:isIntrospectAllTokens>
                         <met:isPkceRequired>false</met:isPkceRequired>
+                        <met:isCodeCredentialEnabled>true</met:isCodeCredentialEnabled>
                         <met:isSecretRequiredForRefreshToken>true</met:isSecretRequiredForRefreshToken>
                         <met:isSecretRequiredForTokenExchange>true</met:isSecretRequiredForTokenExchange>
                         <met:isTokenExchangeEnabled>true</met:isTokenExchangeEnabled>

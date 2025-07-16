@@ -7,14 +7,6 @@ import boto3
 
 
 def handler(event, context):
-
-
-
-    """Function handler."""
-
-
-
-
     """Function handler."""
 
     qbusiness = boto3.client("qbusiness")

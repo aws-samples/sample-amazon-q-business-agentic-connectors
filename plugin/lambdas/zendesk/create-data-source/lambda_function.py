@@ -12,14 +12,6 @@ qbusiness = boto3.client("qbusiness")
 
 
 def handler(event, context):
-
-
-
-    """Function handler."""
-
-
-
-
     """Function handler."""
 
     try:
@@ -118,16 +110,6 @@ def handler(event, context):
 
 
 def parse_body(event):
-
-
-
-    """Function parse_body."""
-
-
-
-
-    """Function parse_body."""
-
     """Parse the API Gateway event body"""
     if "body-json" in event:
         return event["body-json"]
@@ -145,14 +127,6 @@ def parse_body(event):
 
 
 def find_secret_arn_by_subdomain(zendesk_subdomain, client_id):
-
-
-
-    """Function find_secret_arn_by_subdomain."""
-
-
-
-
     """Function find_secret_arn_by_subdomain and client ID"""
     unique_id = client_id.split("-")[-1]
     secret_name = f"qbusiness-zendesk-secret-{zendesk_subdomain}-{unique_id}"
@@ -183,16 +157,6 @@ def find_secret_arn_by_subdomain(zendesk_subdomain, client_id):
 
 
 def generate_zendesk_configuration(secret_arn, zendesk_subdomain, data_source_type):
-
-
-
-    """Function generate_zendesk_configuration."""
-
-
-
-
-    """Function generate_zendesk_configuration."""
-
     """Generate the configuration for a Zendesk data source"""
     # Determine which content types to crawl based on dataSourceType
     crawl_article = data_source_type == "GUIDE" or data_source_type == "BOTH"
@@ -242,16 +206,6 @@ def generate_zendesk_configuration(secret_arn, zendesk_subdomain, data_source_ty
 
 
 def generate_repository_configurations():
-
-
-
-    """Function generate_repository_configurations."""
-
-
-
-
-    """Function generate_repository_configurations."""
-
     """Generate repository configurations with field mappings for different content types"""
     # Common field mappings that apply to multiple content types
     common_field_mappings = [
@@ -294,17 +248,8 @@ def generate_repository_configurations():
 
 
 def create_data_source(config, data_source_role_arn):
-
-
-
-    """Function create_data_source."""
-
-
-
-
-    """Function create_data_source."""
-
     """Create a data source in Amazon Q Business"""
+
     # Generate the Zendesk configuration
     data_source_configuration = generate_zendesk_configuration(
         config["secretArn"], config["zendeskSubdomain"], config["dataSourceType"]

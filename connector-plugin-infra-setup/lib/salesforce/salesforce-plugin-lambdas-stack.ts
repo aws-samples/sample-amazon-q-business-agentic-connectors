@@ -78,7 +78,7 @@ export class SalesforcePluginLambdasStack extends cdk.NestedStack {
         effect: iam.Effect.ALLOW,
         actions: ['secretsmanager:GetSecretValue', 'secretsmanager:DescribeSecret'],
         resources: [
-          `arn:aws:secretsmanager:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:secret:qbusiness-salesforce-credentials-*`,
+          `arn:aws:secretsmanager:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:secret:QBusiness-Salesforce-ds-credentials-*`,
         ],
       }),
     );
@@ -126,7 +126,7 @@ export class SalesforcePluginLambdasStack extends cdk.NestedStack {
         effect: iam.Effect.ALLOW,
         actions: ['secretsmanager:GetSecretValue'],
         resources: [
-          `arn:aws:secretsmanager:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:secret:qbusiness-salesforce-actions-credentials-*`,
+          `arn:aws:secretsmanager:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:secret:QBusiness-Salesforce_crm-*`,
         ],
       }),
     );
@@ -162,7 +162,7 @@ export class SalesforcePluginLambdasStack extends cdk.NestedStack {
           'sts:GetCallerIdentity',
         ],
         roleResources: [
-          `arn:aws:secretsmanager:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:secret:qbusiness-salesforce-credentials-*`,
+          `arn:aws:secretsmanager:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:secret:QBusiness-Salesforce-ds-credentials-*`,
         ],
         environmentVars: {},
       },
@@ -180,7 +180,7 @@ export class SalesforcePluginLambdasStack extends cdk.NestedStack {
           'secretsmanager:DescribeSecret',
         ],
         roleResources: [
-          `arn:aws:secretsmanager:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:secret:qbusiness-salesforce-credentials-*`,
+          `arn:aws:secretsmanager:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:secret:QBusiness-Salesforce-ds-credentials-*`,
         ],
         environmentVars: {},
       },
@@ -193,7 +193,7 @@ export class SalesforcePluginLambdasStack extends cdk.NestedStack {
         role: this.createRole('test-authentication'),
         roleActions: ['secretsmanager:GetSecretValue', 'secretsmanager:DescribeSecret'],
         roleResources: [
-          `arn:aws:secretsmanager:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:secret:qbusiness-salesforce-credentials-*`,
+          `arn:aws:secretsmanager:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:secret:QBusiness-Salesforce-ds-credentials-*`,
         ],
         environmentVars: {},
       },
@@ -215,7 +215,7 @@ export class SalesforcePluginLambdasStack extends cdk.NestedStack {
           'sts:GetCallerIdentity',
         ],
         roleResources: [
-          `arn:aws:secretsmanager:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:secret:qbusiness-salesforce-credentials-*`,
+          `arn:aws:secretsmanager:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:secret:QBusiness-Salesforce-ds-credentials-*`,
           '*', // Q Business resources
           this.dataSourceRole.roleArn,
         ],
@@ -257,7 +257,7 @@ export class SalesforcePluginLambdasStack extends cdk.NestedStack {
           'sts:GetCallerIdentity',
         ],
         roleResources: [
-          `arn:aws:secretsmanager:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:secret:qbusiness-salesforce-actions-credentials-*`,
+          `arn:aws:secretsmanager:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:secret:QBusiness-Salesforce_crm-plugin-*`,
           `arn:aws:qbusiness:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:*`, // Q Business resources
           this.pluginServiceRole.roleArn, // IAM roles
         ],

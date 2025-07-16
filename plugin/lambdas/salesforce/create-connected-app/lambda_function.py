@@ -13,14 +13,6 @@ secretsmanager = boto3.client("secretsmanager")
 
 
 def handler(event, context):
-
-
-
-    """Function handler."""
-
-
-
-
     """Function handler for creating Salesforce Connected App."""
 
     try:
@@ -121,14 +113,6 @@ def handler(event, context):
 
 def create_connected_app_with_session_auth(username, password, security_token, 
                                          app_name, app_unique_name, description, contact_email):
-
-
-
-    """Function create_connected_app_with_session_auth."""
-
-
-
-
     """Create Connected App using Salesforce session-based authentication."""
     
     try:
@@ -153,14 +137,6 @@ def create_connected_app_with_session_auth(username, password, security_token,
 
 
 def get_session_via_soap_login(username, password, security_token):
-
-
-
-    """Function get_session_via_soap_login."""
-
-
-
-
     """Get session ID using SOAP login - most reliable authentication method."""
     
     # SOAP login request
@@ -217,14 +193,6 @@ def get_session_via_soap_login(username, password, security_token):
 
 
 def create_connected_app_via_metadata_api(session_id, instance_url, app_name, app_unique_name, description, contact_email):
-
-
-
-    """Function create_connected_app_via_metadata_api."""
-
-
-
-
     """Create Connected App using Salesforce Metadata API (SOAP)."""
     
     # Determine callback URL based on Salesforce instance type
@@ -303,14 +271,6 @@ def create_connected_app_via_metadata_api(session_id, instance_url, app_name, ap
 
 
 def determine_callback_url(instance_url):
-
-
-
-    """Function determine_callback_url."""
-
-
-
-
     """Determine the correct callback URL based on Salesforce instance type."""
     
     # Check if this is a sandbox instance
@@ -322,18 +282,10 @@ def determine_callback_url(instance_url):
 
 
 def store_initial_salesforce_credentials(host_url, username, password, security_token, callback_url, connected_app_name, app_unique_name):
-
-
-
-    """Function store_initial_salesforce_credentials."""
-
-
-
-
     """Store initial Salesforce credentials in AWS Secrets Manager (without Consumer Key/Secret)."""
     
     # Generate a unique secret name
-    secret_name = f"qbusiness-salesforce-credentials-{str(uuid.uuid4())[:8]}"
+    secret_name = f"QBusiness-Salesforce-ds-credentials-{str(uuid.uuid4())[:8]}"
     
     # Prepare the secret value with initial credentials
     secret_value = {

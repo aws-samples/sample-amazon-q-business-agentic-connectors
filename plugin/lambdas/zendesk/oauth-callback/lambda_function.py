@@ -13,16 +13,6 @@ dynamodb = boto3.resource("dynamodb")
 
 
 def handler(event, context):
-
-
-
-    """Function handler."""
-
-
-
-
-    """Function handler."""
-
     """
     Handle OAuth callback from Zendesk
     
@@ -84,16 +74,6 @@ def handler(event, context):
 
 
 def get_state(state):
-
-
-
-    """Function get_state."""
-
-
-
-
-    """Function get_state."""
-
     """Retrieve state from DynamoDB"""
     table_name = os.environ.get("STATE_TABLE_NAME")
     if not table_name:
@@ -116,16 +96,6 @@ def get_state(state):
 
 
 def build_auto_exchange_page(code, state, api_gateway_url):
-
-
-
-    """Function build_auto_exchange_page."""
-
-
-
-
-    """Function build_auto_exchange_page."""
-
     """
     Build an HTML page that automatically exchanges the authorization code for a token
     
@@ -231,16 +201,6 @@ def build_auto_exchange_page(code, state, api_gateway_url):
 
 
 def build_error_page(title, message):
-
-
-
-    """Function build_error_page."""
-
-
-
-
-    """Function build_error_page."""
-
     """
     Build an HTML error page with proper escaping to prevent XSS
     

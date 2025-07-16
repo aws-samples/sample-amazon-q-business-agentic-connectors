@@ -9,14 +9,6 @@ from botocore.exceptions import ClientError
 
 
 def read_private_key(bucket, client_id, file_name="private.key"):
-
-
-
-    """Function read_private_key."""
-
-
-
-
     """Function read_private_key."""
 
     """
@@ -52,14 +44,6 @@ def store_credentials_in_secrets_manager(
     description="API credentials",
     region_name="us-east-1",
 ):
-
-
-
-    """Function store_credentials_in_secrets_manager."""
-
-
-
-
     """Function store_credentials_in_secrets_manager."""
 
     # Create a Secrets Manager client
@@ -89,14 +73,6 @@ def store_credentials_in_secrets_manager(
 
 
 def create_data_source(application_id, index_id, configuration, data_source_name, role_arn):
-
-
-
-    """Function create_data_source."""
-
-
-
-
     """Function create_data_source."""
 
     q = boto3.client("qbusiness")
@@ -114,14 +90,6 @@ def create_data_source(application_id, index_id, configuration, data_source_name
 
 
 def config_for_sharepoint(secrets_arn, tenant_id, sharepoint_url, s3_bucket, client_id):
-
-
-
-    """Function config_for_sharepoint."""
-
-
-
-
     """Function config_for_sharepoint."""
 
     # Use client ID subfolder for certificate path
@@ -287,14 +255,6 @@ def config_for_sharepoint(secrets_arn, tenant_id, sharepoint_url, s3_bucket, cli
 
 
 def handler(event, context):
-
-
-
-    """Function handler."""
-
-
-
-
     """Function handler."""
 
     print(f"Received event: {event}")

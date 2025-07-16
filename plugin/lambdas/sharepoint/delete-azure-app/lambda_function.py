@@ -8,14 +8,6 @@ from msgraph.core import GraphClient
 
 
 def handler(event, context):
-
-
-
-    """Function handler."""
-
-
-
-
     """Function handler."""
 
     print(f"Received event: {event}")

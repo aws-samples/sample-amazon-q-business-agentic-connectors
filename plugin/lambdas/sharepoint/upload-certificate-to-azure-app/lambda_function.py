@@ -12,14 +12,6 @@ import requests
 
 
 def handler(event, context):
-
-
-
-    """Function handler."""
-
-
-
-
     """Function handler."""
 
     try:
@@ -74,16 +66,6 @@ def handler(event, context):
 
 
 def get_certificate_from_s3(bucket_name, cert_key):
-
-
-
-    """Function get_certificate_from_s3."""
-
-
-
-
-    """Function get_certificate_from_s3."""
-
     """
     Download the certificate file from S3 bucket
     """
@@ -99,16 +81,6 @@ def get_certificate_from_s3(bucket_name, cert_key):
 
 
 def get_access_token(tenant_id, client_id, client_secret):
-
-
-
-    """Function get_access_token."""
-
-
-
-
-    """Function get_access_token."""
-
     """
     Get Microsoft Graph API access token using client credentials flow
     """
@@ -135,16 +107,6 @@ def get_access_token(tenant_id, client_id, client_secret):
 
 
 def update_application_with_certificate(access_token, application_id, cert_data, cert_display_name=None):
-
-
-
-    """Function update_application_with_certificate."""
-
-
-
-
-    """Function update_application_with_certificate."""
-
     """
     Update an Azure application with a new certificate
     """

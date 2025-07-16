@@ -8,14 +8,6 @@ import boto3
 
 
 def handler(event, context):
-
-
-
-    """Function handler."""
-
-
-
-
     """Function handler."""
 
     application_id = None

@@ -10,14 +10,6 @@ secretsmanager = boto3.client("secretsmanager")
 
 
 def handler(event, context):
-
-
-
-    """Function handler."""
-
-
-
-
     """Function handler for updating Salesforce credentials with Consumer Key and Secret."""
 
     try:
@@ -83,14 +75,6 @@ def handler(event, context):
 
 
 def update_salesforce_credentials(secret_name, consumer_key, consumer_secret):
-
-
-
-    """Function update_salesforce_credentials."""
-
-
-
-
     """Update existing Salesforce credentials with Consumer Key and Secret."""
     
     try:

@@ -7,14 +7,6 @@
 
 
 def lambda_handler(event, context):
-
-
-
-    """Function lambda_handler."""
-
-
-
-
     """Function lambda_handler."""
 
     print(event)
@@ -53,12 +45,7 @@ def lambda_handler(event, context):
 
 # Help function to generate IAM policy
 def generatePolicy(principalId, effect, resource):
-
     """Function generatePolicy."""
-
-
-    """Function generatePolicy."""
-
     authResponse = {}
     authResponse["principalId"] = principalId
     if effect and resource:
@@ -73,33 +60,14 @@ def generatePolicy(principalId, effect, resource):
         authResponse["policyDocument"] = policyDocument
 
     authResponse["context"] = {"stringKey": "stringval", "numberKey": 123, "booleanKey": True}
-
     return authResponse
 
 
 def generateAllow(principalId, resource):
-
-
-
     """Function generateAllow."""
-
-
-
-
-    """Function generateAllow."""
-
     return generatePolicy(principalId, "Allow", resource)
 
 
 def generateDeny(principalId, resource):
-
-
-
     """Function generateDeny."""
-
-
-
-
-    """Function generateDeny."""
-
     return generatePolicy(principalId, "Deny", resource)

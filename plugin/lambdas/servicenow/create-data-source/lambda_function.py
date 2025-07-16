@@ -9,14 +9,6 @@ from botocore.exceptions import ClientError
 
 
 def create_config_for_servicenow(secret_arn, instance):
-
-
-
-    """Function create_config_for_servicenow."""
-
-
-
-
     """Function create_config_for_servicenow."""
 
     """
@@ -979,14 +971,6 @@ def create_config_for_servicenow(secret_arn, instance):
 
 
 def create_data_source(application_id, index_id, configuration, datasource_name, role_arn):
-
-
-
-    """Function create_data_source."""
-
-
-
-
     """Function create_data_source."""
 
     q = boto3.client("qbusiness")
@@ -1012,14 +996,6 @@ def store_credentials_in_secrets_manager(
     description="API credentials",
     region_name="us-east-1",
 ):
-
-
-
-    """Function store_credentials_in_secrets_manager."""
-
-
-
-
     """Function store_credentials_in_secrets_manager."""
 
     # Create a Secrets Manager client
@@ -1048,14 +1024,6 @@ def store_credentials_in_secrets_manager(
 
 
 def handler(event, context):
-
-
-
-    """Function handler."""
-
-
-
-
     """Function handler."""
 
     print(f"received event {event}")

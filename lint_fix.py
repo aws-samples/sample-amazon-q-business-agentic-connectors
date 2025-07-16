@@ -94,13 +94,13 @@ def _validate_and_escape_args(args: List[str], cwd: Optional[str] = None) -> Lis
                 if not str(resolved_path).startswith(str(project_root)):
                     raise ValueError(f"Path argument {arg} resolves outside the project directory")
 
-                # Use shlex.escape for additional security
-                secure_args.append(shlex.escape(str(resolved_path)))
+                # Use shlex.quote instead of shlex.escape (which is deprecated)
+                secure_args.append(shlex.quote(str(resolved_path)))
             except Exception as e:
                 raise ValueError(f"Error processing path argument {arg}: {str(e)}") from e
         else:
-            # For non-path arguments, escape and add as string
-            secure_args.append(shlex.escape(arg_str))
+            # For non-path arguments, quote and add as string
+            secure_args.append(shlex.quote(arg_str))
 
     return secure_args
 
@@ -131,7 +131,7 @@ def _execute_secure_subprocess(base_cmd: str, args: List[str], cwd: Optional[str
                 result = subprocess.run(
                     ["isort", "."],
                     cwd=cwd,
-                    check=True,
+                    check=False,  # Changed to False to avoid exceptions
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     text=True,
@@ -147,7 +147,7 @@ def _execute_secure_subprocess(base_cmd: str, args: List[str], cwd: Optional[str
                 result = subprocess.run(
                     ["black", "."],
                     cwd=cwd,
-                    check=True,
+                    check=False,  # Changed to False to avoid exceptions
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     text=True,
@@ -163,7 +163,7 @@ def _execute_secure_subprocess(base_cmd: str, args: List[str], cwd: Optional[str
                 result = subprocess.run(
                     ["flake8", "."],
                     cwd=cwd,
-                    check=True,
+                    check=False,  # Changed to False to avoid exceptions
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     text=True,
@@ -179,7 +179,7 @@ def _execute_secure_subprocess(base_cmd: str, args: List[str], cwd: Optional[str
                 result = subprocess.run(
                     ["pylint", "--recursive=y", "."],
                     cwd=cwd,
-                    check=True,
+                    check=False,  # Changed to False to avoid exceptions
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     text=True,
@@ -193,10 +193,14 @@ def _execute_secure_subprocess(base_cmd: str, args: List[str], cwd: Optional[str
             print(f"Unsupported base command: {base_cmd}")
             return None
 
+        # Check for errors in stderr
+        if result.stderr:
+            print(f"Warning: {base_cmd} reported errors:")
+            print(result.stderr)
+        
         return result.stdout
-    except subprocess.CalledProcessError as e:
-        print(f"Error running {base_cmd} command")
-        print(f"Error output: {e.stderr}")
+    except subprocess.SubprocessError as e:
+        print(f"Error running {base_cmd} command: {str(e)}")
         return None
 
 
@@ -312,10 +316,6 @@ def fix_common_issues(file_path: str) -> None:
 
         # Fix missing docstrings for functions
         def add_docstring(match):
-
-            """Function add_docstring."""
-
-        
             """Add docstring to a function.
 
             Args:
@@ -326,10 +326,14 @@ def fix_common_issues(file_path: str) -> None:
             """
             indent = match.group(1)
             func_def = match.group(2)
-            func_name = re.search(r"def\s+(\w+)", func_def).group(1)
-            if '"""' in match.group(3)[:100]:  # Check if docstring already exists
+            next_lines = match.group(3)
+            
+            # Check if docstring already exists - more thorough check
+            if '"""' in next_lines[:200]:
                 return match.group(0)
-            return f'{indent}{func_def}\n{indent}    """Function {func_name}."""\n{indent}{match.group(3)}'
+                
+            func_name = re.search(r"def\s+(\w+)", func_def).group(1)
+            return f'{indent}{func_def}\n{indent}    """Function {func_name}."""\n{indent}{next_lines}'
 
         content = re.sub(r"(\s*)(def\s+\w+\([^)]*\):)(\s*\S)", add_docstring, content)
 

@@ -11,14 +11,6 @@ secretsmanager = boto3.client("secretsmanager")
 
 
 def handler(event, context):
-
-
-
-    """Function handler."""
-
-
-
-
     """Function handler for testing Salesforce authentication."""
 
     try:
@@ -99,14 +91,6 @@ def handler(event, context):
 
 
 def get_salesforce_credentials(secret_name):
-
-
-
-    """Function get_salesforce_credentials."""
-
-
-
-
     """Retrieve Salesforce credentials from AWS Secrets Manager."""
     
     try:
@@ -127,14 +111,6 @@ def get_salesforce_credentials(secret_name):
 
 
 def test_salesforce_oauth_authentication(credentials):
-
-
-
-    """Function test_salesforce_oauth_authentication."""
-
-
-
-
     """Test Salesforce authentication using OAuth 2.0 Username-Password flow."""
     
     try:
@@ -213,14 +189,6 @@ def test_salesforce_oauth_authentication(credentials):
 
 
 def get_user_info(access_token, instance_url):
-
-
-
-    """Function get_user_info."""
-
-
-
-
     """Get user information using the access token to validate authentication."""
     
     try:

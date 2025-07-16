@@ -24,7 +24,7 @@ def handler(event, context):
         client_id = body.get("clientId")  # Consumer Key from Salesforce
         client_secret = body.get("clientSecret")  # Consumer Secret from Salesforce
         redirect_url = body.get("redirectUrl")  # Q Business endpoint + /oauth/callback
-        salesforce_domain_url = body.get("salesforceDomainUrl")  # e.g., https://yourInstance.my.salesforce.com/services/data/v60.0
+        salesforce_domain_url = body.get("salesforceDomainUrl")  # e.g., https://yourInstance.my.salesforce.com
         q_business_application_id = body.get("qBusinessApplicationId")
         plugin_name = body.get("pluginName", "Salesforce-Actions-Plugin")
         
@@ -37,6 +37,11 @@ def handler(event, context):
                     "message": "Missing required parameters: clientId, clientSecret, redirectUrl, salesforceDomainUrl, qBusinessApplicationId"
                 })
             }
+        
+        # Ensure the Salesforce domain URL has the required API path
+        salesforce_domain_url = salesforce_domain_url.rstrip('/')
+        if not salesforce_domain_url.endswith('/services/data/v60.0'):
+            salesforce_domain_url = f"{salesforce_domain_url}/services/data/v60.0"
         
         # Store Salesforce Actions credentials in AWS Secrets Manager
         secret_name = store_salesforce_actions_credentials(
@@ -105,7 +110,7 @@ def store_salesforce_actions_credentials(client_id, client_secret, redirect_url)
     """Store Salesforce Actions credentials in AWS Secrets Manager."""
     
     # Generate a unique secret name for Actions
-    secret_name = f"qbusiness-salesforce-actions-credentials-{str(uuid.uuid4())[:8]}"
+    secret_name = f"QBusiness-Salesforce_crm-plugin-{str(uuid.uuid4())[:8]}"
     
     # Prepare the secret value with the exact format expected by Q Business
     secret_value = {
